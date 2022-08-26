@@ -31,7 +31,6 @@ dependencies:
     sdk: flutter
   camera: ^0.9.4+19
   image_picker: ^0.8.5
-  tflite: ^1.1.2
   path_provider: ^2.0.9
   path: ^1.8.0
 
@@ -63,9 +62,9 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  assets:
-     - assets/posenet_mv1_075_float_from_checkpoints.tflite
-     - assets/labels.txt
+  # assets:
+  #   - images/a_dot_burr.jpeg
+  #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
