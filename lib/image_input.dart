@@ -4,7 +4,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:tflite_flutter/tflite_flutter.dart';
+import 'package:tflite/tflite.dart';
 
 class ImageInput extends StatefulWidget {
   final Function onSelectImage;
@@ -54,6 +54,28 @@ class _ImageInputState extends State<ImageInput> {
   }
 
   static Future loadModel() async {
+    Tflite.close();
+    try {
+      await Tflite.loadModel(
+        model: 'assets/posenet_mv1_075_float_from_checkpoints.tflite',
+      );
+    } on PlatformException {
+      print("Failed to load the model");
+    }
+  }
 
+  Future poseEstimation(File imageFile) async {
+    final imageByte = await imageFile.readAsBytes();
+    image = await decodeImageFromList(imageByte);
+
+    List recognition = await Tflite.runPoseNetOnImage(
+      path: imageFile.path,
+      imageMean: 125.0,
+      imageStd: 125.0,
+      numResults: 2,
+      threshold: 0.7,
+      nmsRadius: 10,
+      asynch: true,
+    );
   }
 }
