@@ -20,7 +20,7 @@ class _ImageInputState extends State<ImageInput> {
   bool loading = true;
 
   Map<int, dynamic>? keyPoints;
-  ui.Image? image;
+  late ui.Image? image;
 
   Future<void> _takePicture() async {
     setState(() {
@@ -68,7 +68,7 @@ class _ImageInputState extends State<ImageInput> {
     final imageByte = await imageFile.readAsBytes();
     image = await decodeImageFromList(imageByte);
 
-    List recognition = await Tflite.runPoseNetOnImage(
+    List? recognition = await Tflite.runPoseNetOnImage(
       path: imageFile.path,
       imageMean: 125.0,
       imageStd: 125.0,
@@ -77,5 +77,109 @@ class _ImageInputState extends State<ImageInput> {
       nmsRadius: 10,
       asynch: true,
     );
+
+    if (recognition!.isNotEmpty ) {
+      setState(() {
+        keyPoints = Map<int, dynamic>.from(recognition[0]['keypoints']);
+      });
+    } else {
+      keyPoints = {};
+    }
+    setState(() {
+      loading = false;
+    });
   }
+
+  @override
+  void initState() {
+    super.initState();
+    loadModel().then((val) {
+      setState(() {});
+    });
+  }
+
+
+  @override
+  Widget build(BuildContext) {
+    return SingleChildScrollView(
+      child: Container(
+        padding: EdgeInsets.all(10),
+        child: Column(
+          children: [
+            loading
+              ? Container (
+                  width: 380,
+                  height: 500,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    border: Border.all(width: 1, color: Colors.grey),
+                  ),
+                child: const Text(
+                  'No Image Taken',
+                  textAlign: TextAlign.center,
+                ),
+            )
+                : const FittedBox(
+              child: SizedBox(
+                width: 100,
+                height: 100,
+                child: CustomPaint(
+                  painter: CirclePainter(keyPoints, image),
+                )
+              ),
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: FlatButton.icon(
+                    icon: Icon(Icons.photo_camera),
+                    label: Text('カメラ'),
+                    textColor: Theme.of(context).primaryColor,
+                    onPressed: _takePicture,
+                  ),
+                ),
+                Expanded(
+                  child: FlatButton.icon(
+                    icon: Icon(Icons.photo_library),
+                    label: Text('ギャラリー'),
+                    textColor: Theme.of(context).primaryColor,
+                    onPressed: _getImageFromGallery,
+                  ),
+                )
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class CirclePainter extends CustomPainter {
+  late final Map params;
+  late final ui.Image image;
+
+  CirclePainter(this.params, this.image);
+
+  @override
+  void paint(ui.Canvas canvas, Size size) {
+    final paint = Paint();
+    if (image != null) {
+      canvas.drawImage(image, ui.Offset(0, 0), paint);
+    }
+    paint.color = Colors.red;
+    if (params.isNotEmpty) {
+      params.forEach((index, params) {
+        canvas.drawCircle(
+          Offset(size.width * params['x'], size.height * params['y']),
+          10,
+          paint
+        );
+      });
+      print("Done!");
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CirclePainter oldDelegate) => false;
 }
