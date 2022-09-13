@@ -19,8 +19,8 @@ class _ImageInputState extends State<ImageInput> {
   final picker = ImagePicker();
   bool loading = true;
 
-  Map<int, dynamic>? keyPoints;
-  late ui.Image? image;
+  late Map<int, dynamic> keyPoints;
+  late ui.Image image;
 
   Future<void> _takePicture() async {
     setState(() {
@@ -119,7 +119,7 @@ class _ImageInputState extends State<ImageInput> {
                   textAlign: TextAlign.center,
                 ),
             )
-                : const FittedBox(
+                : FittedBox(
               child: SizedBox(
                 width: 100,
                 height: 100,
@@ -131,18 +131,26 @@ class _ImageInputState extends State<ImageInput> {
             Row(
               children: [
                 Expanded(
-                  child: FlatButton.icon(
-                    icon: Icon(Icons.photo_camera),
-                    label: Text('カメラ'),
-                    textColor: Theme.of(context).primaryColor,
+                  child: TextButton.icon(
+                    icon: const Icon(Icons.photo_camera),
+                    label: const Text('カメラ'),
+                    style: ButtonStyle(
+                      textStyle: MaterialStateProperty.all(
+                        const TextStyle(color: Colors.black),
+                      )
+                    ),
                     onPressed: _takePicture,
                   ),
                 ),
                 Expanded(
-                  child: FlatButton.icon(
-                    icon: Icon(Icons.photo_library),
-                    label: Text('ギャラリー'),
-                    textColor: Theme.of(context).primaryColor,
+                  child: TextButton.icon(
+                    icon: const Icon(Icons.photo_library),
+                    label: const Text('ギャラリー'),
+                    style: ButtonStyle(
+                      textStyle: MaterialStateProperty.all(
+                        const TextStyle(color: Colors.black)
+                      )
+                    ),
                     onPressed: _getImageFromGallery,
                   ),
                 )
