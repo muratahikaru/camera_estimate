@@ -56,9 +56,12 @@ class _ImageInputState extends State<ImageInput> {
   static Future loadModel() async {
     Tflite.close();
     try {
-      await Tflite.loadModel(
+      String? res;
+       res = await Tflite.loadModel(
         model: 'assets/posenet_mv1_075_float_from_checkpoints.tflite',
       );
+       print('return res');
+       print(res);
     } on PlatformException {
       print("Failed to load the model");
     }
@@ -172,9 +175,7 @@ class CirclePainter extends CustomPainter {
   @override
   void paint(ui.Canvas canvas, Size size) {
     final paint = Paint();
-    if (image != null) {
-      canvas.drawImage(image, ui.Offset(0, 0), paint);
-    }
+    canvas.drawImage(image, const ui.Offset(0, 0), paint);
     paint.color = Colors.red;
     if (params.isNotEmpty) {
       params.forEach((index, params) {
