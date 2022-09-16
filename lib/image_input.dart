@@ -120,12 +120,12 @@ class _ImageInputState extends State<ImageInput> {
                 ),
             )
                 : FittedBox(
-              child: SizedBox(
-                width: 100,
-                height: 100,
-                child: CustomPaint(
-                  painter: CirclePainter(keyPoints, image),
-                )
+                  child: SizedBox(
+                    width: image.width.toDouble(),
+                    height: image.height.toDouble(),
+                    child: CustomPaint(
+                      painter: CirclePainter(keyPoints, image),
+                    )
               ),
             ),
             Row(
