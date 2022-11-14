@@ -19,9 +19,9 @@ class Predictor {
   bool get ready => _initialized && !_busy;
 
   Future<void> init() async {
+    Tflite.close();
     await Tflite.loadModel(
       model: "assets/posenet_mv1_075_float_from_checkpoints.tflite",
-      useGpuDelegate: true,
     );
     _initialized = true;
   }
