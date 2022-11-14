@@ -36,6 +36,7 @@ class KeyPoint {
   final KeyPointPart part;
   final Vector2 vec;
   final double score;
+
   const KeyPoint(this.part, this.vec, this.score);
 }
 

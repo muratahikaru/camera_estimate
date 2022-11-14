@@ -6,12 +6,14 @@ class PredictionResult {
   final DateTime timestamp;
   final KeyPoints keyPoints;
   final Duration duration;
+
   const PredictionResult(this.timestamp, this.keyPoints, this.duration);
 }
 
 class Predictor {
   bool _initialized = false;
   bool _busy = false;
+
   Predictor();
 
   bool get ready => _initialized && !_busy;
