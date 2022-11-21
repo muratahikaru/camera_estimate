@@ -56,6 +56,9 @@ class Predictor {
         return null;
       }
       final kp = KeyPoints.fromPoseNet(res[0]);
+      print("んげーーーーーーーーー");
+      print(kp);
+      print("--------------------");
       return PredictionResult(ts, kp, DateTime.now().difference(ts));
     } catch (e) {
       rethrow;
