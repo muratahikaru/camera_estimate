@@ -119,27 +119,29 @@ class _SquatCamPageState extends State<SquatCamPage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Column(
-        children: <Widget>[
-          Stack(children: previewStack),
-          _PlayControls(
-              playable: !_playing,
-              onPlay: _onPlay,
-              onStop: _onStop,
-              children: widget.cameras.length > 1
-                  ? [
-                      IconButton(
-                        icon: const Icon(Icons.flip_camera_ios),
-                        iconSize: 32,
-                        onPressed: _playing
-                            ? null
-                            : () {
-                                _choiceCamera(_currentCam ^ 1);
-                              },
-                      ),
-                    ]
-                  : []),
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            Stack(children: previewStack),
+            _PlayControls(
+                playable: !_playing,
+                onPlay: _onPlay,
+                onStop: _onStop,
+                children: widget.cameras.length > 1
+                    ? [
+                        IconButton(
+                          icon: const Icon(Icons.flip_camera_ios),
+                          iconSize: 32,
+                          onPressed: _playing
+                              ? null
+                              : () {
+                                  _choiceCamera(_currentCam ^ 1);
+                                },
+                        ),
+                      ]
+                    : []),
+          ],
+        ),
       ),
     );
   }
@@ -183,6 +185,9 @@ class _SquatCamPageState extends State<SquatCamPage> {
     await _cameraController!.startImageStream((image) async {
       if (!_predictor.ready) return;
       var res = await _predictor.predict(image);
+      print("---------------------");
+      print(res);
+      print("--------------------");
       if (res != null && res.keyPoints.score > 0.5) {
         _frameRate = 1000 / res.duration.inMilliseconds.toDouble();
         _keyPoints = _keyPoints.push(res.timestamp, res.keyPoints);

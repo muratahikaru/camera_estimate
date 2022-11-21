@@ -33,17 +33,26 @@ class Predictor {
       throw ResourceIsBusy();
     }
     _busy = true;
+    print("---------------------");
+    print(_busy);
+    print("--------------------");
     final ts = DateTime.now();
     try {
       var res = await Tflite.runPoseNetOnFrame(
-        bytesList: image.planes.map((plane) => plane.bytes).toList(),
+        bytesList: image.planes.map((plane) {return plane.bytes;}).toList(),
         imageHeight: image.height,
         imageWidth: image.width,
-        numResults: 2,
+        numResults: 1,
       );
       if (res == null) {
+        print("---------------------");
+        print("自分あほnann");
+        print("--------------------");
         throw Exception("Invalid prediction result");
       } else if (res.isEmpty) {
+        print("---------------------");
+        print(res);
+        print("--------------------");
         return null;
       }
       final kp = KeyPoints.fromPoseNet(res[0]);
@@ -52,6 +61,9 @@ class Predictor {
       rethrow;
     } finally {
       _busy = false;
+      print("---------------------");
+      print(_busy);
+      print("--------------------");
     }
   }
 }
