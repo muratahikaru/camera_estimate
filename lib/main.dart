@@ -185,10 +185,10 @@ class _SquatCamPageState extends State<SquatCamPage> {
     await _cameraController!.startImageStream((image) async {
       if (!_predictor.ready) return;
       var res = await _predictor.predict(image);
-      print("---------------------");
-      print(res);
+      print("main.dart:keyPoints_score:PredictionResult");
+      print(res?.keyPoints.score);
       print("--------------------");
-      if (res != null && res.keyPoints.score > 0.5) {
+      if (res != null && res.keyPoints.score > 0.1) {
         _frameRate = 1000 / res.duration.inMilliseconds.toDouble();
         _keyPoints = _keyPoints.push(res.timestamp, res.keyPoints);
 

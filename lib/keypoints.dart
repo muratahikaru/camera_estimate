@@ -48,6 +48,11 @@ class KeyPoints {
       var v = cognition["keypoints"]?[key];
       if (v != null) {
         _points[part] = KeyPoint(part, Vector2(v["x"], v["y"]), v["score"]);
+        // print("keypoints.dart:_point[part]");
+        // print(_points[part]?.part);
+        // print(_points[part]?.vec);
+        // print(_points[part]?.score);
+        // print("--------------------");
       }
     });
   }
@@ -66,6 +71,9 @@ class KeyPoints {
     var sum = _points.entries
         .map((e) => e.value.score)
         .reduce((value, element) => value + element);
+    print("keyPoints.dart: keyPoints.score");
+    print(_points.entries
+        .map((e) => e.value.score));
     return sum / _points.length;
   }
 
