@@ -34,7 +34,6 @@ class SquatCamPage extends StatefulWidget {
   final String title;
   final List<CameraDescription> cameras;
   final bool _showDebugMsg = true;
-
   const SquatCamPage({Key? key, required this.title, required this.cameras})
       : super(key: key);
 
@@ -119,29 +118,27 @@ class _SquatCamPageState extends State<SquatCamPage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            Stack(children: previewStack),
-            _PlayControls(
-                playable: !_playing,
-                onPlay: _onPlay,
-                onStop: _onStop,
-                children: widget.cameras.length > 1
-                    ? [
-                        IconButton(
-                          icon: const Icon(Icons.flip_camera_ios),
-                          iconSize: 32,
-                          onPressed: _playing
-                              ? null
-                              : () {
-                                  _choiceCamera(_currentCam ^ 1);
-                                },
-                        ),
-                      ]
-                    : []),
-          ],
-        ),
+      body: Column(
+        children: <Widget>[
+          Stack(children: previewStack),
+          _PlayControls(
+              playable: !_playing,
+              onPlay: _onPlay,
+              onStop: _onStop,
+              children: widget.cameras.length > 1
+                  ? [
+                IconButton(
+                  icon: const Icon(Icons.flip_camera_ios),
+                  iconSize: 32,
+                  onPressed: _playing
+                      ? null
+                      : () {
+                    _choiceCamera(_currentCam ^ 1);
+                  },
+                ),
+              ]
+                  : []),
+        ],
       ),
     );
   }
@@ -185,10 +182,7 @@ class _SquatCamPageState extends State<SquatCamPage> {
     await _cameraController!.startImageStream((image) async {
       if (!_predictor.ready) return;
       var res = await _predictor.predict(image);
-      print("main.dart:keyPoints_score:PredictionResult");
-      print(res?.keyPoints.score);
-      print("--------------------");
-      if (res != null && res.keyPoints.score > 0.1) {
+      if (res != null && res.keyPoints.score > 0.5) {
         _frameRate = 1000 / res.duration.inMilliseconds.toDouble();
         _keyPoints = _keyPoints.push(res.timestamp, res.keyPoints);
 
@@ -200,10 +194,7 @@ class _SquatCamPageState extends State<SquatCamPage> {
             msg = _count.toString();
           }
           _shallowAlert = Text(msg,
-              style: const TextStyle(
-                  color: Colors.redAccent,
-                  fontSize: 90,
-                  fontWeight: FontWeight.w800));
+              style: const TextStyle(color: Colors.redAccent, fontSize: 90, fontWeight: FontWeight.w800));
           Timer(const Duration(seconds: 2), () {
             setState(() {
               _cntMutex = false;
@@ -223,7 +214,6 @@ class _PlayControls extends StatelessWidget {
   final VoidCallback onStop;
   final double iconSize;
   final List<Widget> children;
-
   const _PlayControls({
     Key? key,
     required this.playable,
@@ -232,25 +222,24 @@ class _PlayControls extends StatelessWidget {
     this.iconSize = 32,
     this.children = const [],
   }) : super(key: key);
-
   @override
   Widget build(BuildContext context) => Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          IconButton(
-            icon: const Icon(Icons.play_arrow),
-            iconSize: iconSize,
-            onPressed: playable ? onPlay : null,
-          ),
-          IconButton(
-            icon: const Icon(Icons.stop),
-            iconSize: iconSize,
-            onPressed: playable ? null : onStop,
-          ),
-          ...children,
-        ],
-      );
+    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    mainAxisSize: MainAxisSize.max,
+    children: [
+      IconButton(
+        icon: const Icon(Icons.play_arrow),
+        iconSize: iconSize,
+        onPressed: playable ? onPlay : null,
+      ),
+      IconButton(
+        icon: const Icon(Icons.stop),
+        iconSize: iconSize,
+        onPressed: playable ? null : onStop,
+      ),
+      ...children,
+    ],
+  );
 }
 
 class _CamView extends StatelessWidget {
@@ -259,7 +248,6 @@ class _CamView extends StatelessWidget {
     required this.cameraController,
   }) : super(key: key);
   final CameraController? cameraController;
-
   @override
   Widget build(BuildContext context) {
     if (cameraController != null) {
@@ -294,45 +282,41 @@ class _KeyPointIndicator extends StatelessWidget {
   }) : super(key: key);
   final double size;
   final Color color;
-
   @override
   Widget build(BuildContext context) => Text(
-        "●",
-        style: TextStyle(fontSize: size, color: color),
-      );
+    "●",
+    style: TextStyle(fontSize: size, color: color),
+  );
 }
 
 class _KeyPointsPreview extends StatelessWidget {
   final KeyPoints keyPoints;
   final double width;
   final double height;
-
   const _KeyPointsPreview({
     Key? key,
     required this.keyPoints,
     required this.width,
     required this.height,
   }) : super(key: key);
-
   @override
   Widget build(BuildContext context) => SizedBox(
-        width: width,
-        height: height,
-        child: Stack(
-          children: keyPoints.points
-              .map((e) => Positioned(
-                    left: e.vec.x * width - 6,
-                    top: e.vec.y * height - 6,
-                    child: const _KeyPointIndicator(),
-                  ))
-              .toList(),
-        ),
-      );
+    width: width,
+    height: height,
+    child: Stack(
+      children: keyPoints.points
+          .map((e) => Positioned(
+        left: e.vec.x * width - 6,
+        top: e.vec.y * height - 6,
+        child: const _KeyPointIndicator(),
+      ))
+          .toList(),
+    ),
+  );
 }
 
 class _SquatChart extends StatelessWidget {
   final KeyPointsSeries data;
-
   const _SquatChart(this.data, {Key? key}) : super(key: key);
 
   @override
